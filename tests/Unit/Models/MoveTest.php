@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MoveTest extends TestCase
 {
-
     use DatabaseTransactions;
 
     private function createMatch() : Match
@@ -38,11 +37,19 @@ class MoveTest extends TestCase
     {
 
         $match = $this->createMatch();
-        $matchId = $match->id;
-        $findMatch = Match::find($matchId);
 
-        $this->assertNotEmpty($findMatch);
-        $this->assertEquals($findMatch->id, $matchId);
+        $matchId = $match->id;
+        $position = 0;
+
+        $move = $this->createMove($position, $matchId);
+        $moveId = $move->id;
+
+        $moveFind = Move::find($moveId);
+        $moveFindId = $moveFind->id;
+
+        $this->assertNotEmpty($moveFind);
+        $this->assertInstanceOf(Move::class, $moveFind);
+        $this->assertEquals($moveFindId, $moveId);
 
     }
 
@@ -51,20 +58,13 @@ class MoveTest extends TestCase
      */
     public function testMatch()
     {
-
         $match = $this->createMatch();
+
         $matchId = $match->id;
+        $position = 0;
 
-        $positions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-        foreach($positions AS $position) {
-            $this->createMove($position, $matchId);
-        }
-
-        $match->refresh();
-
-        $this->assertInstanceOf(Collection::class, $match->moves());
+        $move = $this->createMove($position, $matchId);
+        $this->assertInstanceOf(Match::class, $move->match);
 
     }
-
 }

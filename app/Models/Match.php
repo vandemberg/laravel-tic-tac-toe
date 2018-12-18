@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Match extends Model
@@ -11,9 +10,9 @@ class Match extends Model
     protected $fillable = ['name', 'next', 'winner'];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
-    public function moves() : Collection
+    public function moves()
     {
-        return $this->belongsToMany(Move::class);
+        return $this->hasMany(Move::class);
     }
 
 }
