@@ -1,35 +1,31 @@
 <?php
+namespace App\Http\Controllers\API;
 
-namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Input;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-class MatchController extends Controller {
-
-    public function index() {
-        return view('index');
-    }
+class MatchController extends Controller
+{
 
     /**
-     * Returns a list of matches
-     *
-     * TODO it's mocked, make this work :)
+     * List all Matches
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function matches() {
-        return response()->json($this->fakeMatches());
+    public function index()
+    {
+        return response()->json($this->fakeMatches(), 200);
     }
 
     /**
-     * Returns the state of a single match
-     *
-     * TODO it's mocked, make this work :)
+     * Find a specific Match
      *
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function match($id) {
+    public function show($id)
+    {
         return response()->json([
             'id' => $id,
             'name' => 'Match'.$id,
@@ -44,21 +40,21 @@ class MatchController extends Controller {
     }
 
     /**
-     * Makes a move in a match
+     * Register the move changing the 0 value to 1 or 2
      *
-     * TODO it's mocked, make this work :)
-     *
+     * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function move($id) {
+    public function update(Request $request, $id)
+    {
         $board = [
             1, 0, 2,
             0, 1, 2,
             0, 0, 0,
         ];
 
-        $position = Input::get('position');
+        $position = $request->get("position");
         $board[$position] = 2;
 
         return response()->json([
@@ -71,25 +67,13 @@ class MatchController extends Controller {
     }
 
     /**
-     * Creates a new match and returns the new list of matches
-     *
-     * TODO it's mocked, make this work :)
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function create() {
-        return response()->json($this->fakeMatches());
-    }
-
-    /**
-     * Deletes the match and returns the new list of matches
-     *
-     * TODO it's mocked, make this work :)
+     * Destroy the match with the board related
      *
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete($id) {
+    public function destroy($id)
+    {
         return response()->json($this->fakeMatches()->filter(function($match) use($id){
             return $match['id'] != $id;
         })->values());
@@ -100,7 +84,8 @@ class MatchController extends Controller {
      *
      * @return \Illuminate\Support\Collection
      */
-    private function fakeMatches() {
+    private function fakeMatches()
+    {
         return collect([
             [
                 'id' => 1,
