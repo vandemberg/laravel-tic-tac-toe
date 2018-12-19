@@ -1,10 +1,22 @@
 <?php
+namespace Tests\Support;
 
-Trait CreateMatch {
+use App\Models\Match;
 
-    public function createMatch()
+Trait CreateMatch
+{
+    /**
+     * Create a basic match
+     *
+     * @return Match
+     */
+    public function createMatch() : Match
     {
-
+        return Match::create([
+            'name'   => 'Match 1',
+            'next'   => 2,
+            'winner' => 0
+        ]);
     }
 
 }
