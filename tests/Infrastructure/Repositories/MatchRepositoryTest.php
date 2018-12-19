@@ -46,9 +46,12 @@ class MatchRepositoryTest extends TestCase
     public function testAll()
     {
         $this->init();
+        $count = Match::all()->count();
+
         $repository = new MatchRepository();
         $list = $repository->all();
         $this->assertInstanceOf(Collection::class, $list);
+        $this->assertEquals($count, $list->count());
     }
 
     /**
