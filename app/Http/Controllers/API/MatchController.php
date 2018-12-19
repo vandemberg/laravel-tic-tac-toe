@@ -3,19 +3,29 @@ namespace App\Http\Controllers\API;
 
 
 use App\Http\Controllers\Controller;
+use App\Services\Match\MatchUseCase;
 use Illuminate\Http\Request;
 
 class MatchController extends Controller
 {
+
+    public function store(MatchUseCase $useCase)
+    {
+
+        $matches = $useCase->addNewMatch();
+
+        return response()->json($matches, 201);
+    }
 
     /**
      * List all Matches
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(MatchUseCase $useCase)
     {
-        return response()->json($this->fakeMatches(), 200);
+        $matches = $useCase->list();
+        return response()->json($matches, 200);
     }
 
     /**
@@ -24,46 +34,28 @@ class MatchController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(MatchUseCase $useCase, $id)
     {
-        return response()->json([
-            'id' => $id,
-            'name' => 'Match'.$id,
-            'next' => 2,
-            'winner' => 0,
-            'board' => [
-                1, 0, 2,
-                0, 1, 2,
-                0, 0, 0,
-            ],
-        ]);
+        $match = $useCase->find($id);
+        return response()->json($match,200);
     }
 
     /**
      * Register the move changing the 0 value to 1 or 2
      *
+     * @param MatchUseCase $useCase
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(MatchUseCase $useCase, Request $request, $id)
     {
-        $board = [
-            1, 0, 2,
-            0, 1, 2,
-            0, 0, 0,
-        ];
 
-        $position = $request->get("position");
-        $board[$position] = 2;
+        $position = $request->get('position');
 
-        return response()->json([
-            'id' => $id,
-            'name' => 'Match'.$id,
-            'next' => 1,
-            'winner' => 0,
-            'board' => $board,
-        ]);
+        $match = $useCase->registerMove($position, $id);
+
+        return response()->json($match, 201);
     }
 
     /**
@@ -72,66 +64,10 @@ class MatchController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(MatchUseCase $usecase, $id)
     {
-        return response()->json($this->fakeMatches()->filter(function($match) use($id){
-            return $match['id'] != $id;
-        })->values());
-    }
-
-    /**
-     * Creates a fake array of matches
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    private function fakeMatches()
-    {
-        return collect([
-            [
-                'id' => 1,
-                'name' => 'Match1',
-                'next' => 2,
-                'winner' => 1,
-                'board' => [
-                    1, 0, 2,
-                    0, 1, 2,
-                    0, 2, 1,
-                ],
-            ],
-            [
-                'id' => 2,
-                'name' => 'Match2',
-                'next' => 1,
-                'winner' => 0,
-                'board' => [
-                    1, 0, 2,
-                    0, 1, 2,
-                    0, 0, 0,
-                ],
-            ],
-            [
-                'id' => 3,
-                'name' => 'Match3',
-                'next' => 1,
-                'winner' => 0,
-                'board' => [
-                    1, 0, 2,
-                    0, 1, 2,
-                    0, 2, 0,
-                ],
-            ],
-            [
-                'id' => 4,
-                'name' => 'Match4',
-                'next' => 2,
-                'winner' => 0,
-                'board' => [
-                    0, 0, 0,
-                    0, 0, 0,
-                    0, 0, 0,
-                ],
-            ],
-        ]);
+        $restOfMatches = $usecase->delete($id);
+        return response()->json($restOfMatches, 200);
     }
 
 }
