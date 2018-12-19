@@ -56,8 +56,10 @@ abstract class AbstractRepository implements IRepository
      */
     public function create(array $data)
     {
-        $obj = $this->model->fill($data);
-        return $obj;
+        $model = new $this->model();
+        $model->fill($data);
+        $model->save();
+        return $model;
     }
 
     /**

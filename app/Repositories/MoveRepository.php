@@ -11,4 +11,18 @@ class MoveRepository extends AbstractRepository
         return Move::class;
     }
 
+    public function changeByPosition($matchId, $position, $value)
+    {
+        $move = $this
+            ->model->where("match_id", $matchId)
+            ->where("position", $position)
+            ->first();
+
+        $move->value = $value;
+        $move->save();
+
+        return $move;
+
+    }
+
 }
