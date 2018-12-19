@@ -5,32 +5,32 @@ namespace App\Repositories;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class AbstractRepository implements InterfaceRepository
+abstract class AbstractRepository implements IRepository
 {
 
     protected $model;
 
     /**
-     * When init the repository the model is started
+     * When init the repository the model is started. The Class get by the model function gonna be instantiated
      * AbstractRepository constructor.
      */
     public function __construct()
     {
-        $this->model = $this->model();
+        $class = $this->model();
+        $this->model = new $class;
     }
 
     /**
      * method to set the Eloquent Model ORM
      * @return mixed
      */
-    abstract function model() : Model;
+    abstract function model();
 
     public function all($columns = ['*']) : Collection
     {
         return $this
                 ->model
-                ->select(...$columns)
-                ->with('moves')
+                ->select($columns)
                 ->get();
     }
 
@@ -40,12 +40,11 @@ abstract class AbstractRepository implements InterfaceRepository
      * @param int $id
      * @return Model
      */
-    public function findById(int $id): Model
+    public function findById(int $id)
     {
         return $this
                 ->model
                 ->where("id", $id)
-                ->with('moves')
                 ->first();
     }
 
@@ -55,9 +54,10 @@ abstract class AbstractRepository implements InterfaceRepository
      * @param array $data
      * @return Model
      */
-    public function create(array $data): Model
+    public function create(array $data)
     {
-        return $this->model->create($data);
+        $obj = $this->model->fill($data);
+        return $obj;
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class AbstractRepository implements InterfaceRepository
                 ->where("id", $id)
                 ->first();
 
-        $obj->fillable($data);
+        $obj->fill($data);
         $obj->save();
 
         return $obj;

@@ -8,11 +8,11 @@ interface IRepository
 {
     public function all($columns = ['*']) : Collection;
 
-    public function create(Array $data) : Model;
+    public function create(Array $data);
 
     public function update(Array $data, int $id);
 
-    public function findById(int $id) : Model;
+    public function findById(int $id);
 
     public function delete(int $id);
 

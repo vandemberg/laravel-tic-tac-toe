@@ -1,15 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vandemberg
- * Date: 18/12/18
- * Time: 22:08
- */
-
 namespace App\Repositories;
 
+use App\Models\Move;
 
-class MoveRepository
+class MoveRepository extends AbstractRepository
 {
+
+    public function model()
+    {
+        return Move::class;
+    }
 
 }
