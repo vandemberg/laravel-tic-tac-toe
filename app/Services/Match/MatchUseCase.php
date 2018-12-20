@@ -3,6 +3,8 @@ namespace App\Services\Match;
 
 use App\Repositories\MatchRepository;
 use App\Repositories\MoveRepository;
+use App\Services\TicTacToe\NextMove;
+use App\Services\TicTacToe\Winner;
 use Illuminate\Database\Eloquent\Collection;
 
 class MatchUseCase
@@ -48,6 +50,11 @@ class MatchUseCase
 
     }
 
+    /**
+     * Return all matches
+     *
+     * @return Collection
+     */
     public function list()
     {
         $matchRepository = new MatchRepository();
@@ -60,6 +67,12 @@ class MatchUseCase
         return $matches;
     }
 
+    /**
+     * Return a match by the ID with the board
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
     public function find($id)
     {
         $matchRepository = new MatchRepository();
@@ -68,6 +81,12 @@ class MatchUseCase
         return $match;
     }
 
+    /**
+     * Delete the match and return the rest
+     *
+     * @param $id
+     * @return Collection
+     */
     public function delete($id)
     {
         $repository = new MatchRepository();
@@ -79,34 +98,33 @@ class MatchUseCase
 
     }
 
+    /**
+     * Register the move and check if the played move win
+     *
+     * @param $position
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
     public function registerMove($position, $id)
     {
         $repositoryMatch = new MatchRepository();
         $repositoryMove = new MoveRepository();
 
+        // Find the Match
         $match = $repositoryMatch->findById($id);
         $matchId = $match->id;
 
         // Register the move
-        $value = $match->next;
-        $repositoryMove->changeByPosition($matchId, $position, $value);
+        $playedMove = $match->next;
+        $repositoryMove->changeByPosition($matchId, $position, $playedMove);
 
         // Check if someone win
         $winner = new Winner();
+        $match = $winner->verify($match, $position, $playedMove);
 
-        if($winner->check($match, $position, $value)) {
-            $match->winner = $value;
-            $match->save();
-        }
-
-        // change the next player
-        if ( $match->next == 1) {
-            $match->next = 2;
-        } else {
-            $match->next = 1;
-        }
-
-        $match->save();
+        // change the next move
+        $nextMove = new NextMove();
+        $match = $nextMove->change($match);
 
         $match->board = $match->moves->pluck('value');
 

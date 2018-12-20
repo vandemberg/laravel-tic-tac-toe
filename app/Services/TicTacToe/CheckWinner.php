@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vandemberg
- * Date: 19/12/18
- * Time: 16:42
- */
+namespace App\Services\TicTacToe;
 
-namespace App\Services\Match;
-
-
-class Winner
+class CheckWinner
 {
-
     private $winnerMoves = [
+
         [0, 1, 2],
         [0, 3, 6],
         [0, 4, 8],
@@ -25,10 +17,11 @@ class Winner
         [3, 4, 5],
 
         [6, 7, 8]
+
     ];
 
     /**
-     * Find if the player winner based
+     * Find if the player winner
      *
      * @param $match
      * @param $position
