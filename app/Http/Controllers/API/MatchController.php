@@ -51,11 +51,15 @@ class MatchController extends Controller
     public function update(MatchUseCase $useCase, Request $request, $id)
     {
 
+        $request->validate([
+            'position' => 'required|digits_between:0,8',
+        ]);
+
         $position = $request->get('position');
 
         $match = $useCase->registerMove($position, $id);
 
-        return response()->json($match, 201);
+        return response()->json($match, 200);
     }
 
     /**

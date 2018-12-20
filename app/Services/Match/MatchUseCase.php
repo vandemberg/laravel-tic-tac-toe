@@ -46,6 +46,10 @@ class MatchUseCase
         // Add the match to end of Collection
         $matches->push($match);
 
+        $matches->each(function($match){
+            $match->board = $match->moves->pluck('value');
+        });
+
         return $matches;
 
     }
