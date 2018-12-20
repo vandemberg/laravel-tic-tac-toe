@@ -11,4 +11,28 @@ class MatchRepository extends AbstractRepository
         return Match::class;
     }
 
+    public function winner($matchId, $win)
+    {
+        $match = $this->model
+            ->where("id", $matchId)
+            ->first();
+
+        $match->winner = $win;
+        $match->save();
+
+        return $match;
+    }
+
+    public function nextMove($matchId, $next)
+    {
+        $match = $this->model
+            ->where("id", $matchId)
+            ->first();
+
+        $match->next = $next;
+        $match->save();
+
+        return $match;
+    }
+
 }
