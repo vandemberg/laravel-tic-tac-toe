@@ -19,7 +19,7 @@ class MatchUseCaseTest extends TestCase
         $match = $matches->last();
 
         $moves = $match->moves;
-        $movesExpected = 8;
+        $movesExpected = 9;
 
         $this->assertInstanceOf(Collection::class, $matches);
         $this->assertInstanceOf(Match::class, $match);
@@ -55,8 +55,8 @@ class MatchUseCaseTest extends TestCase
 
         $matchInit = $this->createMatch();
 
-        $nextMove = 2;
-        $currentMove = 1;
+        $nextMove = 1;
+        $currentMove = 2;
 
         foreach([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as $posistion) {
             $this->createMove($posistion, $matchInit->id);
@@ -68,7 +68,7 @@ class MatchUseCaseTest extends TestCase
         $playedMove = $match->board[0];
 
         $this->assertInstanceOf(Match::class, $match);
-        $this->assertEquals($match->next, $nextMove);
+        $this->assertEquals($nextMove, $match->next);
         $this->assertEquals($playedMove, $currentMove);
 
     }
@@ -80,11 +80,11 @@ class MatchUseCaseTest extends TestCase
     {
 
         $matchInit = $this->createMatch();
-        $matchInit->next = 2;
+        $matchInit->next = 1;
         $matchInit->save();
 
-        $nextMove = 1;
-        $currentMove = 2;
+        $nextMove = 2;
+        $currentMove = 1;
 
         foreach([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as $posistion) {
             $this->createMove($posistion, $matchInit->id);
@@ -127,7 +127,7 @@ class MatchUseCaseTest extends TestCase
         $this->createMove(0, $matchInit->id);
 
         $useCase = new MatchUseCase();
-        $matches = $useCase->delete($matchInit);
+        $matches = $useCase->delete($matchInit->id);
 
         $matchFound = Match::find($matchInit->id);
 

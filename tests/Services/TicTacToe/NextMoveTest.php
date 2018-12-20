@@ -2,7 +2,7 @@
 namespace Tests\Services\TicTacToe;
 
 
-class NextMove
+class NextMoveTest
 {
 
 }
